@@ -1,25 +1,66 @@
-<html>
-   <head>
-      <title>Connect to crypto wallet</title>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.4-rc.1/web3.min.js"></script>
- </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swap Interface</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.4-rc.1/web3.min.js"></script>
+</head>
 <body>
-<script>
-/* To connect using MetaMask */
-async function connect() {
-  if (window.ethereum) {
-     await window.ethereum.request({ method: "eth_requestAccounts" });
-     window.web3 = new Web3(window.ethereum);
-     const account = web3.eth.accounts;
-     //Get the current MetaMask selected/active wallet
-     const walletAddress = account.givenProvider.selectedAddress;
-     console.log(`Wallet: ${walletAddress}`);
-  
-  } else {
-   console.log("No wallet");
-  }
-}
-</script>
-<input type="button" value="Connect Wallet" onclick="connect();">
+    <div class="container">
+        <header>
+            <nav>
+                <a href="#">Leaderboard</a>
+                <a href="#">Channel</a>
+            </nav>
+            <div class="actions">
+                <button class="get-app">Homescreen</button>
+                <button class="connect-wallet" onclick="connect()">Connect</button>
+            </div>
+        </header>
+        <main>
+            <h1>Swap Matic to $JYO</h1>
+            <div class="swap-box">
+                <div class="swap-row">
+                    <label for="sell">Sell</label>
+                    <input type="number" id="sell" placeholder="0" oninput="updateBuyAmount()">
+                    <select id="sell-token">
+                        <option value="ETH">Matic</option>
+                    </select>
+                </div>
+                <div class="swap-row">
+                    <label for="buy">Buy Jyo</label>
+                    <input type="number" id="buy" placeholder="0" readonly>
+                    <button>Select token</button>
+                </div>
+                <button class="connect-wallet" onclick="connect()">Connect wallet</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const conversionRate = 6900; // 1 Matic = 6900 JYO
+
+        async function connect() {
+            if (window.ethereum) {
+                await window.ethereum.request({ method: "eth_requestAccounts" });
+                window.web3 = new Web3(window.ethereum);
+                const account = web3.eth.accounts;
+                const walletAddress = account.givenProvider.selectedAddress;
+                console.log(`Wallet: ${walletAddress}`);
+            } else {
+                console.log("No wallet");
+            }
+        }
+
+        function updateBuyAmount() {
+            const sellInput = document.getElementById('sell');
+            const buyInput = document.getElementById('buy');
+            const sellAmount = parseFloat(sellInput.value) || 0;
+            const buyAmount = sellAmount * conversionRate;
+            buyInput.value = buyAmount;
+        }
+    </script>
 </body>
 </html>
